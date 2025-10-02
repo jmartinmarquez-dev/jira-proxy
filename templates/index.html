@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Verificador de conexión a Jira</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" />
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Conecta tu instancia de Jira</h1>
+      <p>
+        Introduce la URL de tu instancia, el correo del usuario y el token de API que
+        deseas utilizar. Haz clic en <strong>Probar conexión</strong> para verificar que los
+        datos son correctos.
+      </p>
+      <form id="jira-form" autocomplete="on">
+        <label for="baseUrl">
+          URL de Jira
+          <input
+            id="baseUrl"
+            name="baseUrl"
+            type="url"
+            placeholder="https://tudominio.atlassian.net"
+            required
+          />
+        </label>
+        <label for="email">
+          Correo electrónico
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="usuario@empresa.com"
+            required
+          />
+        </label>
+        <label for="apiToken">
+          Token de API
+          <input
+            id="apiToken"
+            name="apiToken"
+            type="password"
+            placeholder="Tu token de API de Atlassian"
+            required
+          />
+        </label>
+        <button id="submitButton" type="submit">Probar conexión</button>
+      </form>
+      <section id="result" aria-live="polite" style="margin-top: 24px"></section>
+      <footer>
+        Los tokens de API pueden generarse desde tu cuenta de Atlassian en
+        <a href="https://id.atlassian.com/manage/api-tokens" target="_blank" rel="noreferrer">
+          este enlace
+        </a>.
+      </footer>
+    </main>
+    <script>
+      const form = document.getElementById("jira-form");
+      const result = document.getElementById("result");
+      const button = document.getElementById("submitButton");
+
+      function showMessage(type, message) {
+        result.innerHTML = `<div class="alert ${type}">${message}</div>`;
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        button.disabled = true;
+        showMessage("info", "Comprobando conexión...");
+
+        const payload = {
+          baseUrl: form.baseUrl.value,
+          email: form.email.value,
+          apiToken: form.apiToken.value,
+        };
+
+        try {
+          const response = await fetch("/test-connection", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await response.json();
+          if (response.ok && data.ok) {
+            showMessage("success", data.message);
+          } else {
+            showMessage("error", data.message || "No se pudo conectar a Jira.");
+          }
+        } catch (error) {
+          showMessage("error", "Ocurrió un error inesperado: " + error.message);
+        } finally {
+          button.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

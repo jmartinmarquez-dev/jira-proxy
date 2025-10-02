@@ -1,1 +1,42 @@
-jira proxy
+# Jira Proxy
+
+Esta herramienta web te permite comprobar si tus credenciales de Jira (correo electrónico,
+URL de la instancia y token de API) son válidas. La aplicación ofrece un formulario para
+introducir los parámetros de conexión y un botón para validar la conexión contra el
+endpoint `/rest/api/3/myself` de Jira Cloud.
+
+## Requisitos
+
+- Python 3.10 o superior (no se necesitan dependencias externas)
+
+## Instalación
+
+No es necesario instalar paquetes adicionales: todo funciona con la biblioteca estándar
+de Python. Opcionalmente puedes crear un entorno virtual para mantener tu entorno limpio.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+## Ejecución
+
+Inicia el servidor HTTP indicando en qué puerto quieres exponerlo (8000 por defecto):
+
+```bash
+python app.py
+```
+
+Después de iniciar el servidor visita `http://localhost:8000` y completa el formulario con
+tu URL de Jira (por ejemplo `https://tudominio.atlassian.net`), el correo electrónico y el
+token de API de Atlassian.
+
+## Uso
+
+1. Introduce los tres parámetros obligatorios.
+2. Pulsa **Probar conexión**.
+3. La aplicación mostrará el resultado de la verificación y, si es correcta, indicará el
+   usuario autenticado.
+
+> **Nota:** Por seguridad, evita compartir tus credenciales y genera tokens de API
+> específicos para este tipo de integraciones.

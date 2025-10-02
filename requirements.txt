@@ -1,0 +1,1 @@
+# No se requieren dependencias externas para ejecutar esta aplicación.
